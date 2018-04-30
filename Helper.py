@@ -31,27 +31,19 @@ class ReduceVIF(BaseEstimator, TransformerMixin):
     @staticmethod
     def calculate_vif(X, thresh=5.0):
         # Taken from https://stats.stackexchange.com/a/253620/53565 and modified
-        #dropped=True
-        #while dropped:
-        #    variables = X.columns
-        #    dropped = False
-        #    vif = [variance_inflation_factor(X[variables].values, X.columns.get_loc(var)) for var in X.columns]
+        dropped=True
+        while dropped:
+            variables = X.columns
+            dropped = False
+            vif = [variance_inflation_factor(X[variables].values, X.columns.get_loc(var)) for var in X.columns]
             
-        #    max_vif = max(vif)
-        #    if max_vif > thresh:
-        #        maxloc = vif.index(max_vif)
-        #        print(f'Dropping {X.columns[maxloc]} with vif={max_vif}')
-        #        X = X.drop([X.columns.tolist()[maxloc]], axis=1)                                
-        #        dropped=True
-        #return X
-    
-        variables = X.columns
-        exog = X[variables].values
-        for var in variables:
-            exog_idx = variables.get_loc(var)
-            vif = variance_inflation_factor(exog, exog_idx)
-            if vif > thresh:
-                print(f'Recommend dropping {var} with vif={vif}')
+            max_vif = max(vif)
+            if max_vif > thresh:
+                maxloc = vif.index(max_vif)
+                print(f'Dropping {X.columns[maxloc]} with vif={max_vif}')
+                X = X.drop([X.columns.tolist()[maxloc]], axis=1)                                
+                dropped=True
+        return X
         
         
         

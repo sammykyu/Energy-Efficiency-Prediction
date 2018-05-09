@@ -50,6 +50,8 @@ def GetRegressionModelFormula(outputName, featureNames, intercept, coefficients)
     formula = outputName + " = " + str(intercept)
     for idx, col_name in enumerate(featureNames):
         if (coefficients[idx] != 0):
+            #print("\nFeature '{}' is dropped from the model".format(col_name))
+        #else:
             op = " + " if (coefficients[idx] > 0) else " - "
             formula = formula + op + str(abs(coefficients[idx])) + " X " + col_name
     

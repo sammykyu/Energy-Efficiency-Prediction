@@ -47,17 +47,30 @@ class ReduceVIF(BaseEstimator, TransformerMixin):
         
 
 def GetRegressionModelFormula(outputName, featureNames, intercept, coefficients):
-    formula = outputName + " = " + str(intercept)
+    formula = "Log(" + outputName + ") = " + str(intercept)
     for idx, col_name in enumerate(featureNames):
-        if (coefficients[idx] != 0):
-            #print("\nFeature '{}' is dropped from the model".format(col_name))
-        #else:
+        if (coefficients[idx] == 0):
+            print("Feature '{}' is dropped from the model".format(col_name))
+        else:
             op = " + " if (coefficients[idx] > 0) else " - "
             formula = formula + op + str(abs(coefficients[idx])) + " X " + col_name
     
     return formula
         
-        
+def ModelPerformancePlots(model, X, y):
+    # fitted vs residuals plot
+    fitted = best_clf.predict(x_val)
+    residuals = y_val - fitted
+    x_start = fitted.min() - 0.5
+    x_End = fitted.max() + 0.5  
+    y_End = residuals.max()
+    plt.scatter(x = fitted, y = residuals)
+    plt.plot([x_start, x_End], [0, 0], 'k-', color = 'r')
+    plt.xlim(x_start, x_End)
+    #plt.ylim(0, lineEnd)
+    plt.xlabel("Fitted values")
+    plt.ylabel("Residuals")
+    plt.show()
         
         
         

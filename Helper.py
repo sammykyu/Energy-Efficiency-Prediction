@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import Imputer
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+import matplotlib.pyplot as plt
+import scipy.stats as stats
 
 class ReduceVIF(BaseEstimator, TransformerMixin):
     def __init__(self, thresh=5.0, impute=True, impute_strategy='median'):
@@ -50,17 +52,22 @@ def GetRegressionModelFormula(outputName, featureNames, intercept, coefficients)
     formula = "Log(" + outputName + ") = " + str(intercept)
     for idx, col_name in enumerate(featureNames):
         if (coefficients[idx] == 0):
-            print("Feature '{}' is dropped from the model".format(col_name))
+            print("\tFeature '{}' is dropped from the model".format(col_name))
         else:
             op = " + " if (coefficients[idx] > 0) else " - "
             formula = formula + op + str(abs(coefficients[idx])) + " X " + col_name
     
+    print()
     return formula
         
 def ModelPerformancePlots(model, X, y):
+    
+    plt.figure(1, figsize=(13, 4))
+
     # fitted vs residuals plot
-    fitted = best_clf.predict(x_val)
-    residuals = y_val - fitted
+    plt.subplot(121)
+    fitted = model.predict(X)
+    residuals = y - fitted
     x_start = fitted.min() - 0.5
     x_End = fitted.max() + 0.5  
     y_End = residuals.max()
@@ -70,6 +77,11 @@ def ModelPerformancePlots(model, X, y):
     #plt.ylim(0, lineEnd)
     plt.xlabel("Fitted values")
     plt.ylabel("Residuals")
+    
+    # Q-Q plot
+    plt.subplot(122)
+    stats.probplot(residuals, dist="norm", plot=plt)
+
     plt.show()
         
         
